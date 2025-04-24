@@ -1,0 +1,68 @@
+/* Estilos específicos para mobile */
+
+@media screen and (max-width: 480px) {
+    /* Reset completo do grid para layout em coluna */
+    .detailed-results .detail-block .detail-row,
+    .professional-result .detail-row {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
+        padding: 12px 8px;
+        text-align: left;
+        border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+    }
+    
+    .detail-block .detail-row:last-child,
+    .professional-result .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    /* Estilos para o primeiro elemento (rótulo) */
+    .detail-block .detail-row span:first-child,
+    .professional-result .detail-row span:first-child {
+        margin-bottom: 8px !important;
+        font-weight: 600 !important;
+        text-align: left !important;
+        color: var(--text-dark) !important;
+    }
+    
+    /* Estilos para o segundo elemento (valor) */
+    .detail-block .detail-row span:last-child,
+    .professional-result .detail-row span:last-child {
+        text-align: left !important;
+        font-size: 1.1rem !important;
+        padding-left: 25px !important;
+        color: var(--primary-light) !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Melhorar a apresentação dos ícones */
+    .detail-block .detail-row span i,
+    .professional-result .detail-row span i {
+        width: 22px !important;
+        margin-right: 8px !important;
+        color: var(--primary-light) !important;
+        font-size: 1.1rem !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+    
+    /* Destacar os cabeçalhos das seções */
+    .detailed-results h3,
+    .professionals-results + h3 {
+        margin-top: 30px !important;
+        margin-bottom: 15px !important;
+        font-size: 1.4rem !important;
+    }
+    
+    /* Aumentar espaçamento entre cards para melhor separação visual */
+    .professional-result {
+        margin-bottom: 20px !important;
+        padding: 18px !important;
+    }
+    
+    /* Aumentar respiro interno nos blocos de detalhes */
+    .detail-block {
+        padding: 15px !important;
+    }
+} 

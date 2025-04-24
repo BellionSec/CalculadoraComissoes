@@ -1,0 +1,10 @@
+{
+  "name": "Calculadora de Comissões",
+  "short_name": "Comissões",
+  "description": "Calculadora para distribuição de comissões entre profissionais",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#8B4513",
+  "icons": []
+} 

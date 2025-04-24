@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Comissões</title>
+    <link rel="stylesheet" href="styles.css?v=1.1">
+    <link rel="stylesheet" href="mobile.css?v=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bibliotecas para geração de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- Links para PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calculadora de Comissões">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CALCULADORA DE COMISSÕES (ASSINATURA)</h1>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="dados">Dados</button>
+            <button class="tab-btn" data-tab="resultados">Resultados</button>
+        </div>
+
+        <div class="tab-content active" id="dados">
+            <h2>Dados de Entrada</h2>
+            <div class="form-container">
+                <div class="form-group">
+                    <h3>Serviços e Valores</h3>
+                    <div class="service-inputs">
+                        <div class="service-row">
+                            <label for="cabelo-qtd">Cabelo:</label>
+                            <input type="number" id="cabelo-qtd" min="0" value="" class="servico-qtd">
+                            <label for="cabelo-valor">Valor em fichas:</label>
+                            <input type="number" id="cabelo-valor" min="0" value="30" disabled>
+                        </div>
+                        <div class="service-row">
+                            <label for="barba-qtd">Barba:</label>
+                            <input type="number" id="barba-qtd" min="0" value="" class="servico-qtd">
+                            <label for="barba-valor">Valor em fichas:</label>
+                            <input type="number" id="barba-valor" min="0" value="30" disabled>
+                        </div>
+                        <div class="service-row">
+                            <label for="combo-qtd">Combo:</label>
+                            <input type="number" id="combo-qtd" min="0" value="" class="servico-qtd">
+                            <label for="combo-valor">Valor em fichas:</label>
+                            <input type="number" id="combo-valor" min="0" value="60" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="totals-container">
+                        <div class="total-row">
+                            <label>Total de Serviços:</label>
+                            <div class="total-value" id="total-servicos">0</div>
+                        </div>
+                        <div class="total-row">
+                            <label>Total de Fichas:</label>
+                            <div class="total-value" id="servicos-total-fichas">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <h3>Barbeiros</h3>
+                    <div class="professionals-container">
+                        <div class="professional">
+                            <h4>Pedro Licor</h4>
+                            <div class="service-inputs">
+                                <div class="service-row">
+                                    <label for="p1-cabelo-qtd">Cabelo:</label>
+                                    <input type="number" id="p1-cabelo-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p1-barba-qtd">Barba:</label>
+                                    <input type="number" id="p1-barba-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p1-combo-qtd">Combo:</label>
+                                    <input type="number" id="p1-combo-qtd" min="0" value="">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="professional">
+                            <h4>Thiago Diniz</h4>
+                            <div class="service-inputs">
+                                <div class="service-row">
+                                    <label for="p2-cabelo-qtd">Cabelo:</label>
+                                    <input type="number" id="p2-cabelo-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p2-barba-qtd">Barba:</label>
+                                    <input type="number" id="p2-barba-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p2-combo-qtd">Combo:</label>
+                                    <input type="number" id="p2-combo-qtd" min="0" value="">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="professional">
+                            <h4>Elias Santos</h4>
+                            <div class="service-inputs">
+                                <div class="service-row">
+                                    <label for="p3-cabelo-qtd">Cabelo:</label>
+                                    <input type="number" id="p3-cabelo-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p3-barba-qtd">Barba:</label>
+                                    <input type="number" id="p3-barba-qtd" min="0" value="">
+                                </div>
+                                <div class="service-row">
+                                    <label for="p3-combo-qtd">Combo:</label>
+                                    <input type="number" id="p3-combo-qtd" min="0" value="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h3>Dados da Barbearia</h3>
+                    <div class="input-group">
+                        <label for="valor-total">Valor Total Faturado (R$):</label>
+                        <input type="number" id="valor-total" min="0" value="">
+                    </div>
+                    <div class="input-group">
+                        <label for="porcentagem">Porcentagem para Comissões (%):</label>
+                        <input type="number" id="porcentagem" min="0" max="100" value="">
+                    </div>
+                    
+                    <div class="totals-container">
+                        <div class="total-row">
+                            <label>Valor Total da Comissão:</label>
+                            <div class="total-value" id="valor-total-comissao">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Envolvendo o botão de calcular em um container próprio para centralização -->
+                <div id="calcular-container">
+                    <button id="calcular" class="btn primary">
+                        <i class="fas fa-calculator"></i> Calcular Comissões
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="resultados">
+            <h2>Resultados</h2>
+            <div class="results-container">
+                <div class="summary-cards">
+                    <div class="card">
+                        <i class="fas fa-ticket-alt card-icon"></i>
+                        <h3>Total de Fichas</h3>
+                        <p class="value" id="total-fichas">0</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-money-bill-wave card-icon"></i>
+                        <h3>Valor Total Comissões</h3>
+                        <p class="value" id="valor-comissoes">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-percent card-icon"></i>
+                        <h3>Percentual Utilizado</h3>
+                        <p class="value" id="percentual-utilizado">0%</p>
+                    </div>
+                </div>
+                
+                <div class="detailed-results">
+                    <h3><i class="fas fa-info-circle"></i> Detalhes do Cálculo</h3>
+                    <div class="detail-block">
+                        <div class="detail-row">
+                            <span><i class="fas fa-cash-register"></i> Valor Total Faturado:</span>
+                            <span id="result-valor-faturado">R$ 0,00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-chart-pie"></i> Valor Total das Comissões:</span>
+                            <span id="result-porcentagem">0% (0%)</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-building"></i> Lucro da Barbearia:</span>
+                            <span id="result-lucro">R$ 0,00 (0%)</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-cut"></i> Número Total de Serviços:</span>
+                            <span id="result-total-servicos">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-calendar-alt"></i> Data do Cálculo:</span>
+                            <span id="result-data-calculo">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3><i class="fas fa-users"></i> Comissões por Barbeiro</h3>
+                <div class="professionals-results" id="professionals-results">
+                    <!-- Resultados dos profissionais serão inseridos aqui -->
+                </div>
+                
+                <div class="botoes-container">
+                    <h3><i class="fas fa-download"></i> Exportar Resultados</h3>
+                    <button id="exportarPDF" class="btn secondary">
+                        <i class="fas fa-file-pdf"></i> Exportar para PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notificacao" class="notificacao">
+        <span id="notificacao-texto"></span>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // Registra o service worker para funcionalidade offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registrado com sucesso:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Falha ao registrar o ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html> 
