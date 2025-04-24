@@ -31,4 +31,4 @@ Sistema para cálculo de comissões de barbeiros baseado em serviços e fichas, 
 Não é necessária instalação. Acesse diretamente pelo navegador.
 
 ## Autor
----BellionSec---
+---Bellion|Sec---
