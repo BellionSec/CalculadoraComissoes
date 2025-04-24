@@ -32,4 +32,6 @@ Não é necessária instalação. Acesse diretamente pelo navegador.
 
 ## Autor
 
-Desenvolvido para a barbearia JOHN 3.16. 
+Desenvolvido para a barbearia JOHN 3.16.
+      POR
+---BellionSec---
