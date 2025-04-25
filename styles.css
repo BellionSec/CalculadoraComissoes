@@ -1085,4 +1085,29 @@ html {
 
 ::placeholder {
     color: #666666;
+}
+
+/* Estilos para campos monetários */
+.money-input {
+    font-family: var(--font-main);
+    background-color: var(--input-bg);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px 15px;
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -moz-appearance: textfield;
+    text-align: right;
+}
+
+.money-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.25);
+    outline: none;
+}
+
+.money-input:hover {
+    border-color: var(--primary-light);
 } 

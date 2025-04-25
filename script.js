@@ -151,6 +151,98 @@ document.addEventListener('DOMContentLoaded', function() {
         return todosCamposPreenchidos;
     }
     
+    // Função para formatar valores em moeda brasileira (R$ 1.500,00)
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    
+    // Função para formatar o valor do input quando perder o foco
+    function formatarInputValorTotal() {
+        const input = document.getElementById('valor-total');
+        const valor = input.value.trim();
+        
+        if (valor) {
+            // Remover caracteres não numéricos, exceto vírgula e ponto
+            let valorLimpo = valor.replace(/[^\d,.]/g, '');
+            
+            // Se não houver dígitos, definir como 0
+            if (!/\d/.test(valorLimpo)) {
+                input.value = '0,00';
+                return;
+            }
+            
+            // Garantir que haja apenas uma vírgula ou ponto como separador decimal
+            valorLimpo = valorLimpo.replace(/[.,]/g, function(match, offset, string) {
+                // Encontrar a posição da última ocorrência de vírgula ou ponto
+                const ultimoSeparador = Math.max(
+                    string.lastIndexOf(','), 
+                    string.lastIndexOf('.')
+                );
+                
+                // Se este for o último separador, mantê-lo como vírgula
+                if (offset === ultimoSeparador) {
+                    return ',';
+                }
+                // Caso contrário, remover
+                return '';
+            });
+            
+            // Se não houver vírgula, assumir que são reais sem centavos
+            if (!valorLimpo.includes(',')) {
+                valorLimpo += ',00';
+            } else {
+                // Verificar se há dois dígitos após a vírgula
+                const partes = valorLimpo.split(',');
+                if (partes[1].length < 2) {
+                    // Se houver apenas um dígito após a vírgula, adicionar zero
+                    partes[1] = partes[1].padEnd(2, '0');
+                    valorLimpo = partes.join(',');
+                } else if (partes[1].length > 2) {
+                    // Se houver mais de dois dígitos após a vírgula, truncar para dois
+                    partes[1] = partes[1].substring(0, 2);
+                    valorLimpo = partes.join(',');
+                }
+            }
+            
+            // Substituir vírgula por ponto para cálculos
+            const valorParaCalculo = valorLimpo.replace(',', '.');
+            
+            // Converter para número
+            const numero = parseFloat(valorParaCalculo);
+            
+            if (!isNaN(numero)) {
+                // Formatar o valor para exibição (com ponto para milhares e vírgula para centavos)
+                input.value = formatarMoeda(numero);
+                
+                // Atualizar comissão em tempo real
+                atualizarValorTotalComissao();
+            } else {
+                // Se não for um número válido, resetar para zero
+                input.value = '0,00';
+            }
+        } else {
+            // Campo vazio, definir como zero
+            input.value = '0,00';
+        }
+    }
+    
+    // Event listeners para formatar o campo valor total
+    document.getElementById('valor-total').addEventListener('blur', formatarInputValorTotal);
+    document.getElementById('valor-total').addEventListener('keydown', function(e) {
+        // Permitir apenas números, vírgula, ponto, backspace, delete, tab, enter e teclas de navegação
+        const permitidos = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', 'Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+        
+        if (!permitidos.includes(e.key) && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Formatar quando o usuário pressionar Enter ou Tab
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            formatarInputValorTotal();
+        }
+    });
+    
     function calcularComissoes() {
         // Verificar se todos os campos estão preenchidos
         if (!verificarCamposPreenchidos()) {
@@ -193,7 +285,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Valor total faturado e porcentagem para comissões
-        const valorTotalFaturado = parseFloat(document.getElementById('valor-total').value) || 0;
+        let valorTotalFaturado = document.getElementById('valor-total').value || '0';
+        
+        // Converter valor para formato numérico
+        valorTotalFaturado = valorTotalFaturado.replace(/\./g, '').replace(',', '.');
+        valorTotalFaturado = parseFloat(valorTotalFaturado) || 0;
+        
         const porcentagemComissoes = parseFloat(document.getElementById('porcentagem').value) || 0;
         
         // Calcular o valor total das comissões
@@ -259,7 +356,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function atualizarResultados(resultadosProfissionais, totalFichasGeral, valorTotalComissoes) {
         // Obter valores adicionais
-        const valorTotalFaturado = parseFloat(document.getElementById('valor-total').value) || 0;
+        let valorTotalFaturado = document.getElementById('valor-total').value || '0';
+        
+        // Converter valor para formato numérico
+        valorTotalFaturado = valorTotalFaturado.replace(/\./g, '').replace(',', '.');
+        valorTotalFaturado = parseFloat(valorTotalFaturado) || 0;
+        
         const porcentagemComissoes = parseFloat(document.getElementById('porcentagem').value) || 0;
         
         // Calcular o total de serviços
@@ -270,20 +372,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Atualizar total de fichas e valor das comissões
         document.getElementById('total-fichas').textContent = Math.round(totalFichasGeral);
-        document.getElementById('valor-comissoes').textContent = `R$ ${valorTotalComissoes.toFixed(2)}`;
+        document.getElementById('valor-comissoes').textContent = `R$ ${formatarMoeda(valorTotalComissoes)}`;
         document.getElementById('percentual-utilizado').textContent = `${porcentagemComissoes}%`;
         
         // Atualizar detalhes adicionais
-        document.getElementById('result-valor-faturado').textContent = `R$ ${valorTotalFaturado.toFixed(2)}`;
+        document.getElementById('result-valor-faturado').textContent = `R$ ${formatarMoeda(valorTotalFaturado)}`;
         
         // Calcular valor das comissões em reais e sua porcentagem
         const valorComissoesReais = (valorTotalFaturado * porcentagemComissoes) / 100;
-        document.getElementById('result-porcentagem').textContent = `R$ ${valorComissoesReais.toFixed(2)} (${porcentagemComissoes}%)`;
+        document.getElementById('result-porcentagem').textContent = `R$ ${formatarMoeda(valorComissoesReais)} (${porcentagemComissoes}%)`;
         
         // Calcular lucro da barbearia e sua porcentagem
         const lucroBarbearia = valorTotalFaturado - valorComissoesReais;
         const percentualLucro = 100 - porcentagemComissoes;
-        document.getElementById('result-lucro').textContent = `R$ ${lucroBarbearia.toFixed(2)} (${percentualLucro}%)`;
+        document.getElementById('result-lucro').textContent = `R$ ${formatarMoeda(lucroBarbearia)} (${percentualLucro}%)`;
         
         document.getElementById('result-total-servicos').textContent = totalServicosGeral;
         
@@ -333,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span>${percentualContribuicao}%</span>
                     </div>
                 </div>
-                <div class="commission"><i class="fas fa-money-bill-wave"></i> R$ ${profissional.comissao.toFixed(2)}</div>
+                <div class="commission"><i class="fas fa-money-bill-wave"></i> R$ ${formatarMoeda(profissional.comissao)}</div>
             `;
             
             professionalsResults.appendChild(profissionalElement);
@@ -536,14 +638,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Função para calcular e atualizar o valor total da comissão em tempo real
     function atualizarValorTotalComissao() {
-        const valorTotalFaturado = parseFloat(document.getElementById('valor-total').value) || 0;
+        // Obter o valor do campo e converter para formato numérico
+        let valorTotalFaturado = document.getElementById('valor-total').value || '0';
+        
+        // Remover pontos e substituir vírgula por ponto
+        valorTotalFaturado = valorTotalFaturado.replace(/\./g, '').replace(',', '.');
+        
+        const valorNumerico = parseFloat(valorTotalFaturado) || 0;
         const porcentagemComissoes = parseFloat(document.getElementById('porcentagem').value) || 0;
         
         // Calcular o valor total das comissões
-        const valorTotalComissoes = valorTotalFaturado * (porcentagemComissoes / 100);
+        const valorTotalComissoes = valorNumerico * (porcentagemComissoes / 100);
         
-        // Atualizar o elemento na interface
-        document.getElementById('valor-total-comissao').textContent = `R$ ${valorTotalComissoes.toFixed(2)}`;
+        // Atualizar o elemento na interface usando formatação brasileira
+        document.getElementById('valor-total-comissao').textContent = `R$ ${formatarMoeda(valorTotalComissoes)}`;
     }
 
     // Adicionar event listeners para inputs de quantidade
