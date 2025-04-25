@@ -77,21 +77,6 @@
         align-self: center;
         margin-left: 0;
     }
-    
-    /* Ajustar campo de valor total faturado para celular */
-    #valor-total, .money-input {
-        font-size: 16px !important; /* Prevenir zoom no iOS */
-        -webkit-appearance: none !important;
-        -moz-appearance: textfield !important;
-        background-color: var(--input-bg) !important;
-        color: var(--text-dark) !important;
-    }
-    
-    /* Adicionar teclado numérico com vírgula no mobile */
-    input[inputmode="decimal"] {
-        -webkit-appearance: none;
-        -moz-appearance: textfield;
-    }
 }
 
 @media screen and (max-width: 768px) {
