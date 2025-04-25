@@ -31,5 +31,4 @@ Sistema para cálculo de comissões de barbeiros baseado em serviços e fichas, 
 Não é necessária instalação. Acesse diretamente pelo navegador.
 
 ## Autor
-
-Desenvolvido para a barbearia JOHN 3.16. 
+---Bellion|Sec---
