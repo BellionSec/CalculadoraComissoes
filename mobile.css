@@ -65,4 +65,39 @@
     .detail-block {
         padding: 15px !important;
     }
+    
+    .logo {
+        width: auto;
+        height: 50px;
+        border: 2px solid var(--logo-border);
+        border-radius: 50%;
+    }
+    
+    .logo-container {
+        align-self: center;
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    
+    .logo-container {
+        position: static;
+        transform: none;
+        margin-bottom: 1rem;
+        align-self: center;
+        margin-left: 0;
+    }
+    
+    .logo {
+        width: auto;
+        height: 60px;
+        border: 2px solid var(--logo-border);
+        border-radius: 50%;
+    }
 } 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Fundo gradiente marrom elegante -->
+  <defs>
+    <linearGradient id="fundoGradiente" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A0522D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5D2906;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Fundo com gradiente -->
+  <rect width="512" height="512" rx="100" fill="url(#fundoGradiente)" />
+  
+  <!-- Calculadora - forma moderna -->
+  <rect x="150" y="120" width="212" height="280" rx="25" fill="white" filter="drop-shadow(0px 10px 10px rgba(0,0,0,0.3))" />
+  
+  <!-- Tela da calculadora - aspecto moderno -->
+  <rect x="170" y="140" width="172" height="60" rx="10" fill="#E8F4F8" />
+  
+  <!-- Botões principais - círculos -->
+  <circle cx="185" cy="240" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="245" cy="240" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="305" cy="240" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  
+  <circle cx="185" cy="300" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="245" cy="300" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="305" cy="300" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  
+  <circle cx="185" cy="360" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="245" cy="360" r="20" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="1" />
+  <circle cx="305" cy="360" r="20" fill="#E08744" stroke="#C76E32" stroke-width="1" />
+  
+  <!-- Número no visor -->
+  <text x="256" y="180" font-family="Arial" font-size="22" font-weight="bold" fill="#333333" text-anchor="middle">JOHN 3.16</text>
+
+  <!-- Detalhe elegante na parte superior da calculadora -->
+  <rect x="180" y="130" width="40" height="5" rx="2" fill="#F2A154" />
+</svg> 

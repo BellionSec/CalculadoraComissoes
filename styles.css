@@ -13,6 +13,8 @@
     --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     --transition: all 0.3s ease;
     --border-color: #333333;
+    --gold: #D4AF37;
+    --logo-border: #A47C48;
 }
 
 * {
@@ -33,12 +35,41 @@ body {
     margin: 0 auto;
     padding: 1.5rem;
     text-align: center;
+    position: relative;
+    overflow-x: visible;
 }
 
 header {
     text-align: center;
     margin-bottom: 2rem;
     padding: 1rem 0;
+    position: relative;
+    min-height: 80px;
+    overflow-x: visible;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    overflow-x: visible;
+}
+
+.logo-container {
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.logo {
+    width: auto;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--logo-border);
 }
 
 h1, h2, h3, h4 {
