@@ -1,4 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Função para formatar um número para o padrão monetário brasileiro: 1.118,00
+    function formatarNumeroEmReais(numero) {
+        // Garantir que o número seja tratado como número
+        let num = typeof numero === 'string' ? parseFloat(numero.replace(',', '.')) : Number(numero);
+        
+        // Converter para string com 2 casas decimais
+        let valorStr = num.toFixed(2);
+        
+        // Separar parte inteira e decimal
+        let partes = valorStr.split('.');
+        let parteInteira = partes[0];
+        let parteDecimal = partes[1];
+        
+        // Adicionar pontos como separadores de milhar
+        parteInteira = parteInteira.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        
+        // Juntar as partes usando vírgula como separador decimal
+        return parteInteira + ',' + parteDecimal;
+    }
+    
+    // Função para formatar valores monetários no padrão brasileiro (1.500,00)
+    function formatarMoeda(valor) {
+        return formatarNumeroEmReais(valor);
+    }
+    
     // Garantir que a página sempre role para o topo ao ser carregada
     window.onload = function() {
         window.scrollTo(0, 0);
@@ -270,20 +295,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Atualizar total de fichas e valor das comissões
         document.getElementById('total-fichas').textContent = Math.round(totalFichasGeral);
-        document.getElementById('valor-comissoes').textContent = `R$ ${valorTotalComissoes.toFixed(2)}`;
+        document.getElementById('valor-comissoes').textContent = `R$ ${formatarNumeroEmReais(valorTotalComissoes)}`;
         document.getElementById('percentual-utilizado').textContent = `${porcentagemComissoes}%`;
         
         // Atualizar detalhes adicionais
-        document.getElementById('result-valor-faturado').textContent = `R$ ${valorTotalFaturado.toFixed(2)}`;
+        document.getElementById('result-valor-faturado').textContent = `R$ ${formatarNumeroEmReais(valorTotalFaturado)}`;
         
         // Calcular valor das comissões em reais e sua porcentagem
         const valorComissoesReais = (valorTotalFaturado * porcentagemComissoes) / 100;
-        document.getElementById('result-porcentagem').textContent = `R$ ${valorComissoesReais.toFixed(2)} (${porcentagemComissoes}%)`;
+        document.getElementById('result-porcentagem').textContent = `R$ ${formatarNumeroEmReais(valorComissoesReais)} (${porcentagemComissoes}%)`;
         
         // Calcular lucro da barbearia e sua porcentagem
         const lucroBarbearia = valorTotalFaturado - valorComissoesReais;
         const percentualLucro = 100 - porcentagemComissoes;
-        document.getElementById('result-lucro').textContent = `R$ ${lucroBarbearia.toFixed(2)} (${percentualLucro}%)`;
+        document.getElementById('result-lucro').textContent = `R$ ${formatarNumeroEmReais(lucroBarbearia)} (${percentualLucro}%)`;
         
         document.getElementById('result-total-servicos').textContent = totalServicosGeral;
         
@@ -333,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span>${percentualContribuicao}%</span>
                     </div>
                 </div>
-                <div class="commission"><i class="fas fa-money-bill-wave"></i> R$ ${profissional.comissao.toFixed(2)}</div>
+                <div class="commission"><i class="fas fa-money-bill-wave"></i> R$ ${formatarNumeroEmReais(profissional.comissao)}</div>
             `;
             
             professionalsResults.appendChild(profissionalElement);
@@ -395,7 +420,39 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Acessar a biblioteca jsPDF
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            // Criar o documento em formato retrato
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            // Função para formatar valores no PDF (substituir ponto por vírgula e adicionar separador de milhar)
+            function formatarValorPDF(valorStr) {
+                // Remover R$ e espaços
+                let valor = valorStr.replace('R$ ', '').trim();
+                
+                // Se o valor já tem uma formatação percentual, preservar
+                if (valor.includes('(')) {
+                    // Extrair apenas a parte do valor antes do parênteses
+                    const valorParte = valor.split('(')[0].trim();
+                    const percentualParte = valor.split('(')[1];
+                    
+                    // Formatar a parte do valor
+                    const valorFormatado = formatarValorPDF(valorParte);
+                    return `${valorFormatado} (${percentualParte}`;
+                }
+                
+                // Verificar se é um número válido
+                // Primeiro converter para formato numérico do JavaScript (com ponto como separador decimal)
+                const valorNumerico = valor.replace(/\./g, '').replace(',', '.');
+                const valorNum = parseFloat(valorNumerico);
+                
+                if (isNaN(valorNum)) return valor;
+                
+                // Formatar usando a função personalizada
+                return formatarNumeroEmReais(valorNum);
+            }
             
             // Obter dados para o relatório
             const totalFichas = document.getElementById('total-fichas').textContent;
@@ -450,38 +507,95 @@ document.addEventListener('DOMContentLoaded', function() {
             const profissionaisResults = document.querySelectorAll('.professional-result');
             const dadosProfissionais = [];
             
-            profissionaisResults.forEach(profElement => {
-                const nome = profElement.querySelector('h4').textContent.trim().replace('🧑‍💼 ', ''); // Remover emoji se existir
+            // Nomes dos profissionais
+            const nomesBarbeiros = ["Pedro Licor", "Thiago Diniz", "Elias Santos"];
+            
+            // Extrair os dados com uma abordagem simplificada para evitar problemas no PDF
+            profissionaisResults.forEach((profElement, index) => {
+                // Usar o índice para obter o nome correto da lista
+                const nome = nomesBarbeiros[index];
                 const detalhes = profElement.querySelectorAll('.detail-row span:last-child');
-                const comissao = profElement.querySelector('.commission').textContent.replace('R$ ', '');
                 
-                const cabelo = detalhes[0].textContent.replace(' un', '');
-                const barba = detalhes[1].textContent.replace(' un', '');
-                const combo = detalhes[2].textContent.replace(' un', '');
-                const totalServicos = detalhes[3].textContent.replace(' un', '');
-                const totalFichas = detalhes[4].textContent;
-                const contribuicao = detalhes[5].textContent;
+                // Obter valores de serviços
+                const cabelo = detalhes[0].textContent.replace('x', '').trim();
+                const barba = detalhes[1].textContent.replace('x', '').trim();
+                const combo = detalhes[2].textContent.replace('x', '').trim();
+                const totalServicos = detalhes[3].textContent.trim();
+                const totalFichas = detalhes[4].textContent.trim();
+                const contribuicao = detalhes[5].textContent.trim();
                 
-                // Processar o valor totalFichas para garantir que não tenha casas decimais
-                const fichasSemDecimal = totalFichas.includes('.') ? totalFichas.substring(0, totalFichas.indexOf('.')) : totalFichas;
+                // Obter comissão diretamente do DOM
+                const comissaoElement = profElement.querySelector('.commission');
+                let comissaoTexto = comissaoElement.textContent.trim();
                 
-                dadosProfissionais.push([
-                    nome, cabelo, barba, combo, totalServicos, fichasSemDecimal, contribuicao, `R$ ${comissao.replace('💰 ', '')}`
-                ]);
+                // Extrair apenas o valor numérico, preservando a formatação original
+                let valorComissaoTexto = comissaoTexto.replace('R$ ', '').trim();
+                
+                // Converter para número (substituindo vírgula por ponto para o JavaScript)
+                // Primeiro remover os pontos de separador de milhar, depois trocar vírgula por ponto
+                const valorComissaoNumerico = valorComissaoTexto.replace(/\./g, '').replace(',', '.');
+                const valorComissao = parseFloat(valorComissaoNumerico);
+                
+                // Adicionar ao array de dados
+                dadosProfissionais.push({
+                    nome,
+                    cabelo,
+                    barba,
+                    combo,
+                    totalServicos,
+                    totalFichas,
+                    contribuicao,
+                    valorComissao
+                });
             });
             
-            // Tabela de profissionais
-            doc.autoTable({
-                head: [['Barbeiro', 'Cabelo', 'Barba', 'Combo', 'Total Serviços', 'Fichas', 'Contribuição', 'Comissão']],
-                body: dadosProfissionais,
-                startY: doc.autoTable.previous.finalY + 20,
-                theme: 'grid',
-                headStyles: { fillColor: corPrimaria, textColor: [255, 255, 255] },
-                styles: { fontSize: 9, cellPadding: 3 },
-                columnStyles: { 
-                    0: { cellWidth: 30 },     // Nome do barbeiro
-                    7: { fontStyle: 'bold' }  // Coluna de comissão
-                }
+            // Começar com uma tabela em formato simples
+            // 1. Adicionar um cabeçalho para identificar os profissionais
+            doc.setFontSize(14);
+            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.text('Comissões por Barbeiro', 105, doc.autoTable.previous.finalY + 15, { align: 'center' });
+            
+            // 2. Para cada profissional, criar uma pequena tabela individual
+            let currentY = doc.autoTable.previous.finalY + 25;
+            
+            dadosProfissionais.forEach((prof, index) => {
+                // Título com o nome do barbeiro
+                doc.setFontSize(11);
+                doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+                doc.text(`${prof.nome}`, 20, currentY);
+                
+                // Garantir que o valor da comissão esteja formatado corretamente (1.118,00)
+                let comissaoFormatada = formatarNumeroEmReais(prof.valorComissao);
+                
+                // Garantir que a comissão seja exibida com R$ e formatação correta
+                const comissaoComSimbolo = `R$ ${comissaoFormatada}`;
+                
+                // Configurar a tabela de dados deste profissional no formato original (horizontal)
+                const dadosServicos = [
+                    ['Cabelo', 'Barba', 'Combo', 'Total Serviços', 'Fichas', 'Contribuição', 'Comissão'],
+                    [
+                        prof.cabelo, 
+                        prof.barba, 
+                        prof.combo, 
+                        prof.totalServicos, 
+                        prof.totalFichas, 
+                        prof.contribuicao, 
+                        comissaoComSimbolo
+                    ]
+                ];
+                
+                // Criar a tabela individual com o formato original mas mantendo a largura total igual à tabela de resumo
+                doc.autoTable({
+                    startY: currentY + 5,
+                    body: dadosServicos,
+                    theme: 'grid',
+                    styles: { fontSize: 9, cellPadding: 3, overflow: 'visible' },
+                    // Usar as mesmas margens padrão da tabela de resumo para manter a mesma largura
+                    margin: undefined // Usando as mesmas margens da tabela inicial
+                });
+                
+                // Atualizar a posição Y para o próximo profissional
+                currentY = doc.autoTable.previous.finalY + 15;
             });
             
             // Rodapé
@@ -543,7 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const valorTotalComissoes = valorTotalFaturado * (porcentagemComissoes / 100);
         
         // Atualizar o elemento na interface
-        document.getElementById('valor-total-comissao').textContent = `R$ ${valorTotalComissoes.toFixed(2)}`;
+        document.getElementById('valor-total-comissao').textContent = `R$ ${formatarNumeroEmReais(valorTotalComissoes)}`;
     }
 
     // Adicionar event listeners para inputs de quantidade
