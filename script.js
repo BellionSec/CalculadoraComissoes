@@ -477,6 +477,11 @@ document.addEventListener('DOMContentLoaded', function() {
             doc.setTextColor(0, 0, 0);
             doc.text(`Data: ${dataCalculo}`, 14, 30);
             
+            // Adicionar subtítulo "Resumo Geral"
+            doc.setFontSize(16);
+            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.text('Resumo Geral', 105, 35, { align: 'center' });
+            
             // Formatar totalFichas para remover casas decimais se existirem
             const totalFichasFormatado = totalFichas.includes('.') ? totalFichas.substring(0, totalFichas.indexOf('.')) : totalFichas;
             
@@ -492,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
             doc.autoTable({
                 head: [['Descrição', 'Valor']],
                 body: resumoData,
-                startY: 40,
+                startY: 45,
                 theme: 'grid',
                 headStyles: { fillColor: corPrimaria, textColor: [255, 255, 255] },
                 styles: { fontSize: 10, cellPadding: 5 }
