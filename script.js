@@ -498,11 +498,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 styles: { fontSize: 10, cellPadding: 5 }
             });
             
-            // Tabela de comissões por profissional
-            doc.setFontSize(14);
-            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
-            doc.text('Comissões por Barbeiro', 105, doc.autoTable.previous.finalY + 15, { align: 'center' });
-            
             // Obter os dados dos profissionais
             const profissionaisResults = document.querySelectorAll('.professional-result');
             const dadosProfissionais = [];
@@ -549,53 +544,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
             
-            // Começar com uma tabela em formato simples
-            // 1. Adicionar um cabeçalho para identificar os profissionais
-            doc.setFontSize(14);
-            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
-            doc.text('Comissões por Barbeiro', 105, doc.autoTable.previous.finalY + 15, { align: 'center' });
-            
-            // 2. Para cada profissional, criar uma pequena tabela individual
-            let currentY = doc.autoTable.previous.finalY + 25;
-            
+            // Para cada profissional, criar uma página individual com tabela no formato da tabela geral
             dadosProfissionais.forEach((prof, index) => {
-                // Título com o nome do barbeiro
-                doc.setFontSize(11);
+                // Adicionar uma nova página para cada barbeiro
+                doc.addPage();
+                
+                // Configurações iniciais da página
+                // Título principal
+                doc.setFontSize(20);
                 doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
-                doc.text(`${prof.nome}`, 20, currentY);
+                doc.text('Relatório de Comissões - JOHN 3.16', 105, 15, { align: 'center' });
                 
-                // Garantir que o valor da comissão esteja formatado corretamente (1.118,00)
+                // Informações gerais
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Data: ${dataCalculo}`, 14, 30);
+                
+                // Título da seção do barbeiro
+                doc.setFontSize(14);
+                doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+                doc.text(`${prof.nome}`, 105, 40, { align: 'center' });
+                
+                // Garantir que o valor da comissão esteja formatado corretamente
                 let comissaoFormatada = formatarNumeroEmReais(prof.valorComissao);
-                
-                // Garantir que a comissão seja exibida com R$ e formatação correta
                 const comissaoComSimbolo = `R$ ${comissaoFormatada}`;
                 
-                // Configurar a tabela de dados deste profissional no formato original (horizontal)
-                const dadosServicos = [
-                    ['Cabelo', 'Barba', 'Combo', 'Total Serviços', 'Fichas', 'Contribuição', 'Comissão'],
-                    [
-                        prof.cabelo, 
-                        prof.barba, 
-                        prof.combo, 
-                        prof.totalServicos, 
-                        prof.totalFichas, 
-                        prof.contribuicao, 
-                        comissaoComSimbolo
-                    ]
+                // Criar tabela no mesmo formato da tabela geral
+                const dadosBarbeiro = [
+                    ['Descrição', 'Valor'],
+                    ['Cabelo', `${prof.cabelo}x`],
+                    ['Barba', `${prof.barba}x`],
+                    ['Combo', `${prof.combo}x`],
+                    ['Total de Serviços', prof.totalServicos],
+                    ['Total de Fichas', prof.totalFichas],
+                    ['Contribuição', prof.contribuicao],
+                    ['Comissão', comissaoComSimbolo]
                 ];
                 
-                // Criar a tabela individual com o formato original mas mantendo a largura total igual à tabela de resumo
+                // Criar a tabela com o mesmo estilo da tabela de resumo
                 doc.autoTable({
-                    startY: currentY + 5,
-                    body: dadosServicos,
+                    startY: 50,
+                    body: dadosBarbeiro.slice(1), // Remover o cabeçalho do corpo da tabela
+                    head: [dadosBarbeiro[0]], // Usar a primeira linha como cabeçalho
                     theme: 'grid',
-                    styles: { fontSize: 9, cellPadding: 3, overflow: 'visible' },
-                    // Usar as mesmas margens padrão da tabela de resumo para manter a mesma largura
-                    margin: undefined // Usando as mesmas margens da tabela inicial
+                    headStyles: { fillColor: corPrimaria, textColor: [255, 255, 255] },
+                    styles: { fontSize: 10, cellPadding: 5 }
                 });
-                
-                // Atualizar a posição Y para o próximo profissional
-                currentY = doc.autoTable.previous.finalY + 15;
             });
             
             // Rodapé
