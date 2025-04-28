@@ -554,6 +554,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 doc.setFontSize(20);
                 doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
                 doc.text('Relatório de Comissões - JOHN 3.16', 105, 15, { align: 'center' });
+
+                // Subtítulo
+                doc.setFontSize(15);
+                doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+                doc.text('Resumo Geral', 105, 15, { align: 'center' });
                 
                 // Informações gerais
                 doc.setFontSize(12);
